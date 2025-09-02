@@ -15,8 +15,8 @@ steps:
 
   # Install dependencies and build
   - script: |
-      cd react-app   # 👈 go inside your React app folder
-      npm ci         # clean install dependencies
+      cd azure-demo   # go inside your React app folder
+      npm install     # use install unless you have package-lock.json
       npm run build
       ls -la build
     displayName: 'Build React app'
@@ -24,6 +24,6 @@ steps:
   # Publish build output as artifact
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: 'react-app/build'   # 👈 relative to repo root
+      pathToPublish: 'azure-demo/build'   # correct path to build folder
       artifactName: 'react-build'
       publishLocation: 'Container'
