@@ -15,13 +15,15 @@ steps:
 
   # Install dependencies and build
   - script: |
-      npm install
+      cd react-app   # 👈 go inside your React app folder
+      npm ci         # clean install dependencies
       npm run build
+      ls -la build
     displayName: 'Build React app'
 
   # Publish build output as artifact
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: 'build'
+      pathToPublish: 'react-app/build'   # 👈 relative to repo root
       artifactName: 'react-build'
       publishLocation: 'Container'
