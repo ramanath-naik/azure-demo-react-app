@@ -6,6 +6,8 @@ trigger:
     exclude:
       - main
 
+pr: none        # disables PR validation pipeline runs
+
 pool:
   vmImage: 'ubuntu-latest'
 
