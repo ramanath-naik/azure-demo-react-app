@@ -15,9 +15,14 @@ steps:
 
   # Install dependencies and build
   - script: |
-      npm install
+      node -v
+      npm -v
+      pwd
+      ls -la
+      npm ci   # use ci for clean installs
       npm run build
-    displayName: 'Build React app'
+      ls -la build
+    displayName: 'Build React app with debug info'
 
   # Publish build output as artifact
   - task: PublishBuildArtifacts@1
