@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+      - release   # Only run pipeline when changes land in release branch
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  # Install Node.js
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Install Node.js'
+
+  # Install dependencies and build
+  - script: |
+      npm install
+      npm run build
+    displayName: 'Build React app'
+
+  # Publish build output as artifact
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: 'build'
+      artifactName: 'react-build'
+      publishLocation: 'Container'
