@@ -15,13 +15,19 @@ steps:
 
   # Install dependencies and build
   - script: |
-      npm install
+      cd azure-demo      # go inside your React app folder
+      node -v
+      npm -v
+      pwd
+      ls -la
+      npm ci             # clean install
       npm run build
-    displayName: 'Build React app'
+      ls -la build
+    displayName: 'Build React app with debug info'
 
   # Publish build output as artifact
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: 'build'
+      pathToPublish: 'azure-demo/build'   # correct path to build folder
       artifactName: 'react-build'
       publishLocation: 'Container'
