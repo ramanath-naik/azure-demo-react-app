@@ -1,34 +1,54 @@
 trigger:
-  batch: true
   branches:
     include:
       - release   # Only run pipeline when changes land in release branch
-    exclude:
-      - main
-
-pr: none        # disables PR validation pipeline runs
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  # Install Node.js
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '18.x'
-    displayName: 'Install Node.js'
+stages:
+# -------- CI (Build) --------
+- stage: Build
+  displayName: "Build React App"
+  jobs:
+  - job: BuildJob
+    steps:
+      # Install Node.js
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '18.x'
+        displayName: 'Install Node.js'
 
-  # Install dependencies and build
-  - script: |
-      cd azure-demo   # go inside your React app folder
-      npm install     # use install unless you have package-lock.json
-      npm run build
-      ls -la build
-    displayName: 'Build React app'
+      # Install dependencies and build
+      - script: |
+          cd azure-demo
+          npm install
+          npm run build
+          ls -la build
+        displayName: 'Build React app'
 
-  # Publish build output as artifact
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathToPublish: 'azure-demo/build'   # correct path to build folder
-      artifactName: 'react-build'
-      publishLocation: 'Container'
+      # Publish build output as artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathToPublish: 'azure-demo/build'
+          artifactName: 'react-build'
+          publishLocation: 'Container'
+
+# -------- CD (Deploy) --------
+- stage: Deploy
+  displayName: "Deploy to Azure Web App"
+  dependsOn: Build
+  jobs:
+  - deployment: DeployWebApp
+    environment: 'production'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: 'tool-conn'   # Service connection in DevOps
+              appName: 'deppoc'                        # Your Azure Web App name
+              package: '$(Pipeline.Workspace)/react-build'         # Artifact path
