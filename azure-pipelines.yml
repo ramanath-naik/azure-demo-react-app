@@ -21,7 +21,6 @@ stages:
 
       # Install dependencies and build
       - script: |
-          cd azure-demo
           npm install
           npm run build
           ls -la build
@@ -30,7 +29,7 @@ stages:
       # Publish build output as artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathToPublish: 'azure-demo/build'
+          pathToPublish: 'build'
           artifactName: 'react-build'
           publishLocation: 'Container'
 
