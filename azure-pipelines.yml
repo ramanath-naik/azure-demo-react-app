@@ -31,7 +31,6 @@ stages:
         inputs:
           pathToPublish: 'build'
           artifactName: 'react-build'
-          publishLocation: 'Container'
 
 # -------- CD (Deploy) --------
 - stage: Deploy
@@ -46,6 +45,7 @@ stages:
       runOnce:
         deploy:
           steps:
+          # Download build artifacts
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
@@ -53,8 +53,18 @@ stages:
               artifactName: 'react-build'
               downloadPath: '$(Pipeline.Workspace)'
 
+          # Archive build into a zip file
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(Pipeline.Workspace)/react-build'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Pipeline.Workspace)/react-build.zip'
+              replaceExistingArchive: true
+
+          # Deploy zipped build to Azure Web App
           - task: AzureWebApp@1
             inputs:
               azureSubscription: 'tool-conn'
               appName: 'deppoc'
-              package: '$(Pipeline.Workspace)/react-build/**'
+              package: '$(Pipeline.Workspace)/react-build.zip'
