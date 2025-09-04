@@ -46,8 +46,15 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'react-build'
+              downloadPath: '$(Pipeline.Workspace)'
+
           - task: AzureWebApp@1
             inputs:
-              azureSubscription: 'tool-conn'   # Service connection in DevOps
-              appName: 'deppoc'                        # Your Azure Web App name
-              package: '$(Pipeline.Workspace)/react-build'         # Artifact path
+              azureSubscription: 'tool-conn'
+              appName: 'deppoc'
+              package: '$(Pipeline.Workspace)/react-build/build'
