@@ -57,4 +57,4 @@ stages:
             inputs:
               azureSubscription: 'tool-conn'
               appName: 'deppoc'
-              package: '$(Pipeline.Workspace)/react-build'
+              package: '$(Pipeline.Workspace)/react-build/**'
